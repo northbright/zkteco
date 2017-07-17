@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"sort"
 	"strconv"
 	"time"
 
+	"github.com/garyburd/redigo/redis"
 	"github.com/northbright/xls2csv-go/xls2csv"
 )
 
-type Util struct {
+type DB struct {
 	RedisAddr     string
 	RedisPassword string
 }
@@ -57,11 +59,88 @@ func dbgLog(fmt string, v ...interface{}) {
 	}
 }
 
-func NewUtil(redisAddr, redisPassword string) *Util {
-	return &Util{redisAddr, redisPassword}
+func Open(redisAddr, redisPassword string) *DB {
+	return &DB{redisAddr, redisPassword}
 }
 
-func (u *Util) UpdateAttendance(xlsFile string) error {
+func getAttendance(c redis.Conn, name, date string) (string, string, error) {
+	k := fmt.Sprintf("kaoqin:%v", name)
+
+	field := fmt.Sprintf("%v:in", date)
+	clockIn, err := redis.String(c.Do("HGET", k, field))
+	if err != nil && err != redis.ErrNil {
+		return "", "", err
+	}
+
+	field = fmt.Sprintf("%v:in", date)
+	clockOut, err := redis.String(c.Do("HGET", k, field))
+	if err != nil && err != redis.ErrNil {
+		return "", "", err
+	}
+
+	return clockIn, clockOut, nil
+}
+
+func updateAttendance(c redis.Conn, name, date, clockIn, clockOut string) error {
+	var arr []string
+
+	oldClockIn, oldClockOut, err := getAttendance(c, name, date)
+	if err != nil {
+		return err
+	}
+
+	if oldClockIn != "" {
+		arr = append(arr, oldClockIn)
+	}
+
+	if oldClockOut != "" {
+		arr = append(arr, oldClockOut)
+	}
+
+	if clockIn != "" {
+		arr = append(arr, clockIn)
+	}
+
+	if clockOut != "" {
+		arr = append(arr, clockOut)
+	}
+
+	// Sort
+	sort.Strings(arr)
+	dbgLog("sorted arr: %v", arr)
+
+	l := len(arr)
+	switch l {
+	case 0:
+		return nil
+	case 1:
+		clockIn = arr[0]
+		k := fmt.Sprintf("kaoqin:%v", name)
+		field := fmt.Sprintf("%v:in", date)
+		value := clockIn
+		if _, err = c.Do("HSET", k, field, value); err != nil {
+			return err
+		}
+	case 2, 3, 4:
+		clockIn = arr[0]
+		clockOut = arr[l-1]
+		k := fmt.Sprintf("kaoqin:%v", name)
+		field := fmt.Sprintf("%v:in", date)
+		value := clockIn
+		if _, err = c.Do("HSET", k, field, value); err != nil {
+			return err
+		}
+
+		field = fmt.Sprintf("%v:out", date)
+		value = clockOut
+		if _, err = c.Do("HSET", k, field, value); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (db *DB) UpdateAttendance(xlsFile string) error {
 	var err error
 	var records [][]string
 
@@ -135,12 +214,18 @@ func (u *Util) UpdateAttendance(xlsFile string) error {
 	re1 := regexp.MustCompile(p1)
 	re2 := regexp.MustCompile(p2)
 
+	// Get Redis Connection
+	c, err := GetRedisConn(db.RedisAddr, db.RedisPassword)
+	if err != nil {
+		return err
+	}
+	defer c.Close()
+
 	// Get attendance data.
 	for i := 4; i+1 <= n-1; i += 2 {
 		// Get name.
 		name := records[i][10]
 		dbgLog("name: %v", name)
-
 		for j := 0; j <= days-1; j++ {
 			// Get date by adding days to start date.
 			t := startTime.AddDate(0, 0, j)
@@ -162,8 +247,11 @@ func (u *Util) UpdateAttendance(xlsFile string) error {
 					clockIn = matched[1]
 				}
 			}
+			dbgLog("clock in/out: %v, %v", clockIn, clockOut)
 
-			dbgLog("clock in: %v, out: %v", clockIn, clockOut)
+			if err = updateAttendance(c, name, date, clockIn, clockOut); err != nil {
+				return err
+			}
 		}
 	}
 
