@@ -8,26 +8,24 @@ import (
 	"github.com/northbright/zkteco"
 )
 
-func ExampleGetAttendances() {
-
+func Example() {
+	// Set debug mode to true.
 	zkteco.SetDebugMode(true)
 
-	// Get absolute path of example xls file.
-	f, _ := pathhelper.GetCurrentExecDir()
-	f = path.Join(f, "files/campus-b.xls")
+	// Create an Util instance.
+	util := zkteco.NewUtil(":6379", "")
 
-	records, err := zkteco.GetAttendances(f)
+	// Get absolute path of example attendance xls file.
+	f, _ := pathhelper.GetCurrentExecDir()
+	f = path.Join(f, "files/campus-a.xls")
+
+	// Update attendance.
+	err := util.UpdateAttendance(f)
 	if err != nil {
-		log.Printf("zkteco.GetAttendances() failed: %v", err)
+		log.Printf("util.UpdateAttendance() failed: %v", err)
 		return
 	}
 
-	log.Printf("zkteco.GetAttendances() ok")
-	for i, v := range records {
-		log.Printf("len: %v", len(v))
-		log.Printf("%v: %v", i, v)
-
-	}
-
+	log.Printf("util.UpdateAttendance ok")
 	// Output:
 }
