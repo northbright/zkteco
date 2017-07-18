@@ -72,7 +72,7 @@ func getAttendance(c redis.Conn, name, date string) (string, string, error) {
 		return "", "", err
 	}
 
-	field = fmt.Sprintf("%v:in", date)
+	field = fmt.Sprintf("%v:out", date)
 	clockOut, err := redis.String(c.Do("HGET", k, field))
 	if err != nil && err != redis.ErrNil {
 		return "", "", err
