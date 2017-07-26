@@ -21,7 +21,7 @@ install:
   - make install
   - go get github.com/northbright/pathhelper
   - go get github.com/garyburd/redigo/redis
-  - go get github.com/northbright/xls2csv-go/xls2csv
+  - CGO_CFLAGS="-I$HOME/include" CGO_LDFLAGS="-L$HOME/lib -lxlsreader" go get github.com/northbright/xls2csv-go/xls2csv
 
 before_script:
   - export LD_LIBRARY_PATH="$HOME/lib":$LD_LIBRARY_PATH
