@@ -34,6 +34,17 @@ Package zkteco parses the XLS files outputed from zkteco device(KQ803) and updat
 
 * Value of each field is the clock in / out time. Time format: HH:MM.
 
+#### Examples
+
+        // Open a DB by given Redis address and password.
+        db := zkteco.Open(":6379", "")
+
+        // Get absolute path of example attendance xls file.
+        f := "/home/xx/campus-a.xls"
+
+        // Update attendance.
+        db.UpdateAttendance(f)
+
 #### Documentation
 * [API Reference](http://godoc.org/github.com/northbright/zkteco)
 
