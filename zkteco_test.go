@@ -12,7 +12,7 @@ func Example() {
 	// Set debug mode to true.
 	zkteco.SetDebugMode(true)
 
-	// Open a DB.
+	// Open a DB by given Redis address and password.
 	db := zkteco.Open(":6379", "")
 
 	// Get absolute path of example attendance xls file.
