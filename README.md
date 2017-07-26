@@ -48,5 +48,9 @@ Package zkteco parses the XLS files outputed from zkteco device(KQ803) and updat
 #### Documentation
 * [API Reference](http://godoc.org/github.com/northbright/zkteco)
 
+#### Requirements
+* zkteco requires [libxls](http://libxls.sourceforge.net/) and [xls2csv-go](https://github.com/northbright/xls2csv-go)
+* You may find installation guide in [xls2csv-go](https://github.com/northbright/xls2csv-go).
+
 #### License
 * [MIT License](LICENSE)
