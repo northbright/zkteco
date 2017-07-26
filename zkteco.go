@@ -12,8 +12,11 @@ import (
 	"github.com/northbright/xls2csv-go/xls2csv"
 )
 
+// DB represents zkteco attendance database.
 type DB struct {
-	RedisAddr     string
+	// RedisAddr is Redis address. e.g. ":6379".
+	RedisAddr string
+	// RedisPassword is Redis password.
 	RedisPassword string
 }
 
@@ -59,10 +62,12 @@ func dbgLog(fmt string, v ...interface{}) {
 	}
 }
 
+// Open opens a DB which contains zkteco attendance data.
 func Open(redisAddr, redisPassword string) *DB {
 	return &DB{redisAddr, redisPassword}
 }
 
+// getAttendance gets the attendance data by given employee name and date.
 func getAttendance(c redis.Conn, name, date string) (string, string, error) {
 	k := fmt.Sprintf("kaoqin:%v", name)
 
@@ -81,6 +86,7 @@ func getAttendance(c redis.Conn, name, date string) (string, string, error) {
 	return clockIn, clockOut, nil
 }
 
+// updateAttendance updates employee attendance data in Redis.
 func updateAttendance(c redis.Conn, name, date, clockIn, clockOut string) error {
 	var arr []string
 
@@ -147,6 +153,7 @@ func updateAttendance(c redis.Conn, name, date, clockIn, clockOut string) error 
 	return nil
 }
 
+// UpdateAttendance updates employees' attendance data by XLS file which is outputed by zkteco device.
 func (db *DB) UpdateAttendance(xlsFile string) error {
 	var err error
 	var records [][]string
