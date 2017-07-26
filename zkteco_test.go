@@ -12,7 +12,7 @@ func Example() {
 	// Set debug mode to true.
 	zkteco.SetDebugMode(true)
 
-	// Create an Util instance.
+	// Open a DB.
 	db := zkteco.Open(":6379", "")
 
 	// Get absolute path of example attendance xls file.
