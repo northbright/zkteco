@@ -89,20 +89,27 @@ func updateAttendance(c redis.Conn, name, date, clockIn, clockOut string) error 
 		return err
 	}
 
+	// Use map to emulate set
+	m := map[string]bool{}
+
 	if oldClockIn != "" {
-		arr = append(arr, oldClockIn)
+		m[oldClockIn] = true
 	}
 
 	if oldClockOut != "" {
-		arr = append(arr, oldClockOut)
+		m[oldClockOut] = true
 	}
 
 	if clockIn != "" {
-		arr = append(arr, clockIn)
+		m[clockIn] = true
 	}
 
 	if clockOut != "" {
-		arr = append(arr, clockOut)
+		m[clockOut] = true
+	}
+
+	for k, _ := range m {
+		arr = append(arr, k)
 	}
 
 	// Sort
