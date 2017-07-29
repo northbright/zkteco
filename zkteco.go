@@ -175,7 +175,7 @@ func (db *DB) UpdateAttendance(xlsFile string) error {
 	}
 
 	if n%2 != 0 {
-		err = fmt.Errorf("rows % of XLS file mod 2 != 0")
+		err = fmt.Errorf("rows of XLS file mod 2 != 0")
 		return err
 	}
 
