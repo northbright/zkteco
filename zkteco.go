@@ -114,7 +114,7 @@ func updateAttendance(c redis.Conn, name, date, clockIn, clockOut string) error 
 		m[clockOut] = true
 	}
 
-	for k, _ := range m {
+	for k := range m {
 		arr = append(arr, k)
 	}
 
