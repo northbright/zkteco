@@ -28,7 +28,7 @@ var (
 	debugMode = false
 )
 
-// SetDebugMode sets debug mode for package unifi.
+// SetDebugMode sets debug mode.
 func SetDebugMode(f bool) {
 	debugMode = f
 }
