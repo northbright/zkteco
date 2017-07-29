@@ -153,7 +153,7 @@ func updateAttendance(c redis.Conn, name, date, clockIn, clockOut string) error 
 	return nil
 }
 
-// UpdateAttendance updates employees' attendance data by XLS file which is outputed by zkteco device.
+// UpdateAttendance updates employees' attendance data by XLS file which is outputted by zkteco device.
 func (db *DB) UpdateAttendance(xlsFile string) error {
 	var err error
 	var records [][]string

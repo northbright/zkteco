@@ -1,6 +1,6 @@
 # zkteco
 
-Package zkteco parses the XLS files outputed from zkteco device(KQ803) and update the employee attendance data in [Redis](https://redis.io).
+Package zkteco parses the XLS files outputted from zkteco device(KQ803) and update the employee attendance data in [Redis](https://redis.io).
 
 #### Data in Redis
 * The attendance data of each emplyee are stored in a Redis Hash.
