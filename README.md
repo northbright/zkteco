@@ -1,5 +1,7 @@
 # zkteco
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/northbright/zkteco)](https://goreportcard.com/report/github.com/northbright/zkteco)
+
 Package zkteco parses the XLS files outputted from zkteco device(KQ803) and update the employee attendance data in [Redis](https://redis.io).
 
 #### Data in Redis
