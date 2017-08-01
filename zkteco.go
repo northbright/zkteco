@@ -21,7 +21,7 @@ type DB struct {
 }
 
 const (
-	defSheetId = 2
+	defSheetID = 2
 )
 
 var (
@@ -162,7 +162,7 @@ func (db *DB) UpdateAttendance(xlsFile string) error {
 		logFnResult("UpdateAttendance", err)
 	}()
 
-	records, err = xls2csv.XLS2CSV(xlsFile, defSheetId)
+	records, err = xls2csv.XLS2CSV(xlsFile, defSheetID)
 	if err != nil {
 		return err
 	}
