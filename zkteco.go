@@ -41,8 +41,9 @@ func IsDebugMode() bool {
 // logFnResult outputs the result of the function.
 //
 // params:
-//     funcName: function name.
-//     err: result of function.
+//
+//	funcName: function name.
+//	err: result of function.
 func logFnResult(funcName string, err error) {
 	if !debugMode {
 		return
@@ -164,26 +165,24 @@ func (db *DB) UpdateAttendance(xlsFile string) error {
 
 	records, err = xls2csv.XLS2CSV(xlsFile, defSheetID)
 	if err != nil {
+		log.Printf("xls2csv.XLS2CSV() error: %v", err)
 		return err
 	}
+	log.Printf("xls2csv.XLS2CSV() OK, records: %v", records)
 
 	// Check row numbers.
 	n := len(records)
-	if n <= 4 {
-		err = fmt.Errorf("rows of XLS file <= 4")
-		return err
-	}
-
-	if n%2 != 0 {
-		err = fmt.Errorf("rows of XLS file mod 2 != 0")
+	if n <= 3 {
+		err = fmt.Errorf("rows of XLS file <= 3")
 		return err
 	}
 
 	// Get begin date of attendace.
 	p := `^(\d{4})-(\d{2})-(\d{2}) ~ \d{4}-\d{2}-\d{2}$`
 	re := regexp.MustCompile(p)
-	matched := re.FindStringSubmatch(records[2][2])
+	matched := re.FindStringSubmatch(records[1][2])
 	if len(matched) != 4 {
+		log.Printf("len(matched) = %d", len(matched))
 		err = fmt.Errorf("can not find begin / end date of attendace")
 		return err
 	}
@@ -211,10 +210,11 @@ func (db *DB) UpdateAttendance(xlsFile string) error {
 	dbgLog("startTime: %v", startTime)
 
 	// Get day numbers.
-	colNums := len(records[3])
+	colNums := len(records[2])
 	days := 0
 	for i := 0; i <= colNums-1; i++ {
-		if records[3][i] != "" {
+		if records[2][i] != "" {
+			log.Printf("records[2][%d] = %s", i, records[2][i])
 			days++
 		}
 	}
@@ -236,7 +236,7 @@ func (db *DB) UpdateAttendance(xlsFile string) error {
 	defer c.Close()
 
 	// Get attendance data.
-	for i := 4; i+1 <= n-1; i += 2 {
+	for i := 3; i+1 <= n-1; i += 2 {
 		// Get name.
 		name := records[i][10]
 		dbgLog("name: %v", name)

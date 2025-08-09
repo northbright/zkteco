@@ -2,9 +2,7 @@ package zkteco_test
 
 import (
 	"log"
-	"path"
 
-	"github.com/northbright/pathhelper"
 	"github.com/northbright/zkteco"
 )
 
@@ -16,8 +14,7 @@ func Example() {
 	db := zkteco.Open(":6379", "")
 
 	// Get absolute path of example attendance xls file.
-	f, _ := pathhelper.GetCurrentExecDir()
-	f = path.Join(f, "files/campus-a.xls")
+	f := "files/campus-a.xls"
 
 	// Update attendance.
 	err := db.UpdateAttendance(f)
