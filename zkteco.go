@@ -10,9 +10,11 @@ import (
 )
 
 const (
+	// Default sheet ID of the XLS output from ZKTeco devices.
 	defSheetID = 2
 )
 
+// Attendance stores the clock in / out time of one employee's working day.
 type Attendance struct {
 	ID       string
 	Name     string

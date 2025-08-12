@@ -1,6 +1,7 @@
 # zkteco
 
 Package zkteco parses the XLS files output from zkteco device(KQ803).
+It's based on [xls2csv-go](https://github.com/northbright/xls2csv-go).
 
 ## Install
 * Install [xls2csv-go](https://github.com/northbright/xls2csv-go)
